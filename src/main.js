@@ -1,3 +1,4 @@
+/* eslint-disable */
 import Vue from 'vue'
 
 import 'normalize.css/normalize.css' // A modern alternative to CSS resets
@@ -13,7 +14,11 @@ import router from './router'
 
 import '@/icons' // icon
 import '@/permission' // permission control
-
+import * as directives from '@/directives'
+console.log(directives)
+Object.keys(directives).forEach(ele => {
+	Vue.directive(ele, directives[ele])
+})
 // set ElementUI lang to EN
 Vue.use(ElementUI)
 // 如果想要中文版 element-ui，按如下方式声明

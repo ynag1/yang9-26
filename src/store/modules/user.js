@@ -1,5 +1,6 @@
+/* eslint-disable */
 import { login } from '@/api/login'
-import { getUserInfo } from '@/api/user'
+import { getUserInfo ,getUserDetailById} from '@/api/user'
 export default {
   namespaced: true,
   state: {
@@ -26,11 +27,13 @@ export default {
     },
     async getUserInfo({ commit }) {
       // 接口请求
-      const res = await getUserInfo()
-      console.log(res)
-      commit('SET_USERINFO', res)
+			const res = await getUserInfo()// result就是用户的基本资料
+			const res1 = await getUserDetailById (res.userId)// 为了获取头像
+			const result = { ...res ,...res1}
+      // console.log(res)
+      commit('SET_USERINFO', result)// 提交mutations
       // return res
-      return JSON.parse(JSON.stringify(res))
+      return JSON.parse(JSON.stringify(result))
     }
   }
 }
