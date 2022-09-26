@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>防抖函数</title>
+    <style>
+        .box {
+            width: 200px;
+            height: 200px;
+            overflow: auto;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="box" id="container">
+        <p>节流演示</p>
+        <p>节流演示</p>
+        <p>节流演示</p>
+        <p>节流演示</p>
+        <p>节流演示</p>
+        <p>节流演示</p>
+        <p>节流演示</p>
+        <p>节流演示</p>
+        <p>节流演示</p>
+        <p>节流演示</p>
+        <p>节流演示</p>
+        <p>节流演示</p>
+        <p>节流演示</p>
+        <p>节流演示</p>
+        <p>节流演示</p>
+        <p>节流演示</p>
+        <p>节流演示</p>
+        <p>节流演示</p>
+        <p>节流演示</p>
+        <p>节流演示</p>
+        <p>节流演示</p>
+        <p>节流演示</p>
+        <p>节流演示</p>
+        <p>节流演示</p>
+        <p>节流演示</p>
+        <p>节流演示</p>
+        <p>节流演示</p>
+        <p>节流演示</p>
+        <p>节流演示</p>
+        <p>节流演示</p>
+        <p>节流演示</p>
+        <p>节流演示</p>
+        <p>节流演示</p>
+        <p>节流演示</p>
+        <p>节流演示</p>
+        <p>节流演示</p>
+
+    </div>
+</body>
+<script>
+    // 在前端开发中会遇到一些频繁的事件触发，比如：   1000/200= 5ms;
+
+    // window 的 resize(窗口大小)、scroll（滚动）
+    // mousedown、mousemove
+    // keyup、keydown
+    // ……
+
+    // 前端开发中，我们常常会去监听滚动事件或者用户输入框验证事件，如果事件处理没有频率限制，就会加重浏览器的负担，影响用户的体验感，
+
+    // 因此，我们可以采取防抖（debounce）和节流（throttle）来处理，减少调用事件的频率，达到较好的用户体验。
+    // throttle 节流     指定时间间隔内只会执行一次任务；
+    // 节流的原理很简单：  如果你持续触发事件，每隔一段时间，只执行一次事件。
+    // 关于节流的实现，有两种主流的实现方式，一种是使用时间戳，一种是设置定时器。
+
+
+    // 场景很多，常见的有：
+
+    // 屏幕尺寸变化时页面内容的变动，执行相应逻辑；
+
+    // 监听鼠标滚动时间，执行相应逻辑；
+
+    // 监听重复点击时的时间，执行相应逻辑
+
+    // 规定在一个单位时间内，只能触发一次函数。如果这个单位时间内触发多次函数，只有一次生效。
+    // 在节流函数内部使用开始时间prev、当前时间now和剩余时间remain，当剩余时间小于等于0意味着执行处理函数，这样保证第一次就能立即执行函数并且每隔delay时间执行一次；
+
+    function throttle(func, delay) {
+        var timer = null; // 使用闭包，缓存变量
+        var prev = Date.now(); // 最开始进入滚动的时间
+        return function () {
+            var context = this;   // this指向window
+            var args = arguments;
+            var now = Date.now();
+            var remain = delay - (now - prev); // 剩余时间
+            clearTimeout(timer);
+            // 如果剩余时间小于0，就立刻执行
+            if (remain <= 0) {
+                func.apply(context, args);
+                prev = Date.now();
+            } else {
+                timer = setTimeout(func, remain);
+            }
+        }
+    }
+
+
+
+    // 处理的函数
+    function handle() {
+        console.log(Math.random());
+    }
+
+    var container = document.getElementById("container");
+    container.addEventListener("scroll", throttle(handle, 3000))//20次    真实需求中   一秒调依次函数就足够了   怎么办？
+
+
+
+
+</script>
+
+</html>
