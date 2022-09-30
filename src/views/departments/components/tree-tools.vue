@@ -10,15 +10,15 @@
         <el-col>{{ treeNode.manager }}</el-col>
         <el-col>
           <!-- 下拉菜单 element -->
-          <el-dropdown>
+          <el-dropdown @command="handleCommand">
             <span>
               操作<i class="el-icon-arrow-down" />
             </span>
             <!-- 下拉菜单 -->
             <el-dropdown-menu slot="dropdown">
-              <el-dropdown-item>添加子部门</el-dropdown-item>
-              <el-dropdown-item v-if="isRoot">编辑部门</el-dropdown-item>
-              <el-dropdown-item v-if="isRoot">删除部门</el-dropdown-item>
+              <el-dropdown-item command="add">添加子部门</el-dropdown-item>
+              <el-dropdown-item v-if="isRoot" command="bj">编辑部门</el-dropdown-item>
+              <el-dropdown-item v-if="isRoot" command="sc">删除部门</el-dropdown-item>
             </el-dropdown-menu>
           </el-dropdown>
         </el-col>
@@ -28,6 +28,7 @@
 </template>
 
 <script>
+/* eslint-disable */
 // 该组件需要对外开放属性 外部需要提供一个对象 对象里需要有name  manager
 export default {
   // props可以用数组来接收数据 也可以用对象来接收
@@ -43,6 +44,20 @@ export default {
       typeo: Boolean,
       default: true // 默认显示
     }
-  }
+  },
+	methods: {
+       handleCommand(type){
+				console.log(type)
+				if(type==='add'){
+					// 新增 现在 treeTools addDept
+					this.$emit('addDepts',this.treeNode)
+				}
+				else if(type==='bj'){
+
+				}else{
+
+				}
+      }
+    }
 }
 </script>
