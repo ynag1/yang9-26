@@ -47,7 +47,7 @@ export default {
   },
 	methods: {
        handleCommand(type){
-				console.log(type)
+				// console.log(type)
 				if(type==='add'){
 					// 新增 现在 treeTools addDept
 					this.$emit('addDepts',this.treeNode)

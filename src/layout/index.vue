@@ -46,7 +46,7 @@ export default {
   async created() {
     const res = await this.$store.dispatch('user/getUserInfo')
     res.username = '12313'
-    console.log(res)
+    // console.log(res)
   },
 
   methods: {

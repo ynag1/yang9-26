@@ -13,7 +13,7 @@
       <el-form-item
         prop="name"
         label="角色"
-        :rules="[{required:true,message:'角色名称不能为空',trigger:'blur'}]" >
+        :rules="[{required:true,message:'角色名称不能为空',trigger:'blur'}]">
         <el-input v-model="fromData.name" />
       </el-form-item>
       <el-form-item label="描述" prop="description">
@@ -72,7 +72,7 @@ export default {
 				this.$message.success(this.fromData.id ? '编辑成功'  :'新增成功')
 				this.handleClose()
 			} catch (e) {  
-        console.log(e)
+        // console.log(e)
       }finally{
 				this.loading=false
 			}

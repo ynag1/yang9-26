@@ -44,7 +44,7 @@ export default {
     async getDepartments() {
      const { depts ,companyName, companyManage} = await getDepartments()
 		 this.departs = tranListToTreeData(depts, '')
-		 console.log(this.departs)
+		//  console.log(this.departs)
 		 this.company = { name:companyName, manager: companyManage, id:'' } 
     },
 		addDepts(node){
