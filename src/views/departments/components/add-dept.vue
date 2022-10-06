@@ -1,6 +1,6 @@
 <template>
   <!-- 新增部门的弹层 -->
-  <el-dialog title="新增部门" :visible="showDialog" @close="handleClose">
+  <el-dialog :title="title" :visible="showDialog" @close="handleClose">
     <!-- 表单组件  el-form   label-width设置label的宽度   -->
     <!-- 匿名插槽 -->
     <el-form ref="addDeptForm" label-width="120px" :model="formData" :rules="rules">
@@ -31,7 +31,7 @@
 </template>
 <script>
 /* eslint-disable */
-import { getDepartments,addDepartments } from "@/api/departments"
+import { getDepartments,addDepartments ,getDepartDetail} from "@/api/departments"
 import {getEmployeeSimple} from '@/api/employees'
 // 部门重点 在tree
 export default {
@@ -52,20 +52,38 @@ export default {
 		// 在部门编码 整个模块中不允许重复
      const { depts } = await getDepartments()
 		//  console.log(depts);
-     const isRepeat = depts.some(item => item.code === value)
+		let isRepeat=true
+		 // 编辑模式下 在对比的过程中把自己排除，然后再去对比其他
+		 if(this.formData.id){
+     isRepeat = depts.some(item =>item.id!==this.formData.id&& item.code === value)
+		 }else{
+     isRepeat = depts.some(item => item.code === value)
+		 }
      isRepeat ? callback(new Error(`组织架构中已经有部门使用${value}编码`)) :  callback()
+
     }
 		// 部门名称 同级部门中禁止出现重复部门
 		// 重点是 同级部门如何重所有部门中，把同级部门的数据筛选出来
 		// 先确定 父ID 先重 tree 拿到数据 在把数据送到父组件 父组件在把书名给到add
 		const checkNode = async(rule, value, callback) => {
      const { depts } = await getDepartments()
+		 let isRepeat=true
+		 // 无法准确的校验同级部门数据（同级的列表不对
+		 // 解决的法案：先找到所以与自己处于同级的列表，如果出现重复就不通过
 		 // 找同级部门
-     const isNode = depts.filter(item => item.pid === this.treeNode.id)
-		const isRepeat = isNode.some(ele => ele.name === value) 
-		 console.log(isNode)
+		 if(this.formData.id){//编辑模式
+		 // depts ==> 找到真正的同级部门pid pid 是相同的
+		 const isNode1 = depts.filter(item => item.pid === this.treeNode.pid&&item.id!==this.treeNode.id)
+		 isRepeat = isNode1.some(ele => ele.name === value) 
+		//  console.log(isNode1)// 同级部门
+		 }else{//新增子部门
+		 	const isNode = depts.filter(item => item.pid === this.treeNode.id)
+      isRepeat = isNode.some(ele => ele.name === value) 
+		 }
+		//  console.log(isNode)
 		 isRepeat ? callback(new Error(`部门名称中已经有部门使用${value}编码`)) :  callback()
     }
+		// 先拿到所以的 
 		return{
 			 formData: {
         name: '', // 部门名称
@@ -99,6 +117,11 @@ export default {
 	created(){
 		this.getEmployeeSimple()
 	},
+	computed:{
+		title(){
+			return this.formData.id ? '编辑模式' : '新增模式'
+		}
+	},
 	methods:{
 		handleClose() {
 			this.$emit('update:showDialog', false)
@@ -119,10 +142,14 @@ export default {
 			try{
 				await this.$refs.addDeptForm.validate()
 				this.loading=true
-				await addDepartments({...this.formData, pid: this.treeNode.id})
+				if(this.formData.id){
+					await getDepartDetail(this.formData)
+				}else{
+					await addDepartments({...this.formData, pid: this.treeNode.id})
+				}
 				// 调用接口添加子部门，小于新增的部门pid设置当前部门的id，新增部门就成自己的子部门，确定按钮的 loading 状态，
 				//接口新增成功之后，消息提示成功，
-				this.$message.success('新增成功')
+				this.$message.success(`${this.formData.id?'编辑' :'新增'} 成功`)
 				//刷新父组件的组织架构，
 				this.$parent.getDepartments()
 				//关闭弹窗

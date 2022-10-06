@@ -1,5 +1,5 @@
 <template>
-  <div class="departments-container">
+  <div v-loading="loading" class="departments-container">
     <!-- 头部信息 -->
     <el-card>
       <tree-tools :tree-node="company" :isRoot="false" @addDepts="addDepts" />
@@ -8,10 +8,10 @@
     <el-tree :data="departs" :props="defaultProps" :default-expand-all="true">
       <!-- 传入内容 插槽内容 会循环多次 有多少节点 就循环多少次 -->
       <!-- 作用域插槽 slot-scope="obj" 接收传递给插槽的数据   data 每个节点的数据对象-->
-      <tree-tools slot-scope="{ data }" :tree-node="data" @addDepts="addDepts" />
+      <tree-tools slot-scope="{ data }" :tree-node="data" @addDepts="addDepts" @demiDepts="demiDepts" @refreshDepts="getDepartments" />
     </el-tree>
-		<!-- 把currentNode 传递给 add  -->
-    <add-dept :show-dialog.sync="showDialog" :tree-node="currentNode" />
+    <!-- 把currentNode 传递给 add  -->
+    <add-dept ref="addDept" :show-dialog.sync="showDialog" :tree-node="currentNode" />
   </div>
 </template>
 
@@ -34,7 +34,8 @@ export default {
       },
       company: { name: '江苏传智播客教育科技股份有限公司', manager: '负责人' },
 			showDialog:false,
-			currentNode:{}
+			currentNode:{},
+			loading: false
     }
   },
   mounted() {
@@ -42,14 +43,26 @@ export default {
   },
   methods: {
     async getDepartments() {
+			try{
+			this.loading=true;
      const { depts ,companyName, companyManage} = await getDepartments()
 		 this.departs = tranListToTreeData(depts, '')
 		//  console.log(this.departs)
-		 this.company = { name:companyName, manager: companyManage, id:'' } 
+		 this.company = { name:companyName, manager: companyManage, id:'' }
+			}finally{
+				this.loading=false
+			} 
     },
 		addDepts(node){
 			this.showDialog=true
 			this.currentNode=node
+		},
+		demiDepts(node){
+			// console.log(node);
+			this.showDialog = true
+      this.currentNode = {...node}
+      this.$refs.addDept.formData = {...node}
+    
 		}
   }
 }

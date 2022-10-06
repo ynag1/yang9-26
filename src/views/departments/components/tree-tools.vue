@@ -28,6 +28,7 @@
 </template>
 
 <script>
+import { delDepartments } from '@/api/departments'
 /* eslint-disable */
 // 该组件需要对外开放属性 外部需要提供一个对象 对象里需要有name  manager
 export default {
@@ -53,11 +54,23 @@ export default {
 					this.$emit('addDepts',this.treeNode)
 				}
 				else if(type==='bj'){
-
+					// 编辑
+					this.$emit('demiDepts',this.treeNode)
 				}else{
-
+					// 点击删除
+					this.$confirm('确定删除该部门','删除提示',{
+						cancelButtonText: '取消',
+            confirmButtonText: '确定'
+					}).then(()=>{
+						// 如果点击了确定就会进入then
+           return delDepartments(this.treeNode.id) // 返回promise对象
+					}).then(res=>{
+						this.$message.success('删除部门成功')
+						this.$emit('refreshDepts')
+					})
 				}
       }
     }
 }
 </script>
+
