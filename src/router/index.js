@@ -50,7 +50,6 @@ export const constantRoutes = [
     component: () => import('@/views/404'),
     hidden: true
   },
-
   {
     path: '/',
     component: Layout,
@@ -62,7 +61,16 @@ export const constantRoutes = [
       meta: { title: '首页', icon: 'dashboard' }
     }]
   },
-  { path: '*', redirect: '/404', hidden: true }
+	{
+		path: '/import',
+		component: Layout,
+		hidden: true,// 控制导航的显示
+		children: [{
+			path: '',
+      name: 'import',
+      component: () => import('@/views/import/index')		}]
+	},
+	{ path: '*', redirect: '/404', hidden: true },
 ]
 
 const createRouter = () => new Router({

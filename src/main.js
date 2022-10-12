@@ -14,8 +14,12 @@ import router from './router'
 
 import '@/icons' // icon
 import '@/permission' // permission control
+
+import components from '@/components/index'
+Vue.use(components)// 全局注册组件
+
+
 import * as directives from '@/directives'
-console.log(directives)
 Object.keys(directives).forEach(ele => {
 	Vue.directive(ele, directives[ele])
 })

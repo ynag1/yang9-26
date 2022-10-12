@@ -38,7 +38,7 @@ module.exports = {
     },
     proxy: { // 配置开发环境    跨域
       '/api': {
-        target: 'http://ihrm-java.itheima.net/', // 请求后台接口
+        target: 'http://ihrm.itheima.net/', // 请求后台接口
         changeOrigin: true // 是否允许跨域
       }
     }
