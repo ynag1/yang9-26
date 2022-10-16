@@ -71,9 +71,7 @@ export default {
 				this.$emit('refreshList') // 新增之后刷新
 				this.$message.success(this.fromData.id ? '编辑成功'  :'新增成功')
 				this.handleClose()
-			} catch (e) {  
-        // console.log(e)
-      }finally{
+			}finally{
 				this.loading=false
 			}
 		}

@@ -25,6 +25,11 @@
     <el-card>
       <el-table v-loading="loading" border :data="list">
         <el-table-column label="序号" sortable="" width="80" type="index" />
+        <el-table-column label="头像">
+          <template slot-scope="{row}">
+            <img style="wodth:100px;height: 100px;" :src="row.staffPhoto" alt="" @click="label">
+          </template>
+        </el-table-column>
         <el-table-column label="姓名" prop="username" />
         <el-table-column label="工号" prop="workNumber" />
         <el-table-column label="聘用形式" prop="formOfEmployment" :formatter="formatterFn">
@@ -70,6 +75,9 @@
     </el-card>
     <!-- 新增组件 -->
     <addemployee :dialogVisible.sync="dialogvisble" />
+    <el-dialog title="收货地址" :visible.sync="dialogTableVisible">
+      <canvas ref="canvas" />
+    </el-dialog>
   </div>
 </template>
 
@@ -79,11 +87,13 @@ console.log(EmployeeEnum)
 import { getEmployeeList, delEmployee } from '@/api/employees'
 import PageTools from '@/components/PageTools/index.vue'
 import addemployee from './components/add-employee.vue'
+import qrcode from 'qrcode'
 export default {
   name: 'HrsaasIndex',
   components: { PageTools, addemployee },
   data() {
     return {
+      dialogTableVisible: false,
       page: {
         page: 1, // 当前页码
         size: 10
@@ -168,6 +178,22 @@ export default {
     }, // 点击查看
     goDetail(row) {
       this.$router.push('/employees/detail' + row.id)
+    },
+    label(staffPhoto) {
+      // vue 数据驱动视图组件系统
+      // 数据变化：数据变化--视图变化
+      // 为什么？ 如果是同步的 将视图更新（异步的
+      // 等所有数据变化了
+      if (!staffPhoto) return this.$message.error('暂无头像')
+      console.log(staffPhoto)
+      this.dialogTableVisible = true
+      // this.$nextTick 方法、视图更新视图之后触发，获取到最新的视图
+      this.$nextTick(() => {
+        qrcode.toCanvas(this.$refs.canvas, 'sample text', function(error) {
+          if (error) console.error(error)
+          console.log('success!')
+        })
+      })
     }
   }
 }

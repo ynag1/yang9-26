@@ -1,4 +1,4 @@
-// 员工
+// 员工EmployeeEnum
 export default {
   // 聘用形式
   hireType: [

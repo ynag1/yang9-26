@@ -1,5 +1,6 @@
 <template>
   <div class="user-info">
+    <i class="el-icon-printer" @click="$router.push('/employees/print/'+ userId + ' ?type=personal ')"></i>
     <!-- 个人信息 -->
     <el-form label-width="220px">
       <!-- 工号 入职时间 -->
@@ -58,6 +59,7 @@
         <el-col :span="12">
           <el-form-item label="员工头像">
             <!-- 放置上传图片 -->
+            <UploadImg ref="defaulturl_img" :defaulturl="defaulturl" @on-success="ondefaulturl" />
           </el-form-item>
         </el-col>
       </el-row>
@@ -88,9 +90,9 @@
         </el-form-item>
         <!-- 个人头像 -->
         <!-- 员工照片 -->
-
         <el-form-item label="员工照片">
           <!-- 放置上传图片 -->
+          <UploadImg ref="ondefault_pic" :defaulturl="defaultpic" @on-success="ondefaultpic" />
         </el-form-item>
         <el-form-item label="国家/地区">
           <el-select v-model="formData.nationalArea" class="inputW2">
@@ -387,9 +389,11 @@
 
 <script>
 import EmployeeEnum from '@/api/constant/employees'
+import UploadImg from '@/components/ImageUpload'
 import { getUserDetailById, saveUserDetailById } from '@/api/user'// 获取用户的基本信息
 import { getPersonalDetail, updatePersonal } from '@/api/employees'// 用户详情的基础信息
 export default {
+  components: { UploadImg },
   data() {
     return {
       userId: this.$route.params.id,
@@ -457,7 +461,9 @@ export default {
         isThereAnyCompetitionRestriction: '', // 有无竞业限制
         proofOfDepartureOfFormerCompany: '', // 前公司离职证明
         remarks: '' // 备注
-      }
+      },
+      defaulturl: '',
+      defaultpic: ''
     }
   },
   created() {
@@ -467,14 +473,24 @@ export default {
   methods: {
     async getUserDetailById() {
       const res = await getUserDetailById(this.userId)
+      if (res.staffPhoto) {
+        this.defaulturl = res.staffPhoto
+      }
       this.userInfo = res
     },
     async getPersonalDetail() {
       const res = await getPersonalDetail(this.userId)
+      if (res.staffPhoto) {
+        this.defaultpic = res.staffPhoto
+      }
       this.formData = res
     }, // 点击保存更新
     async saveUser() {
       try {
+        if (this.$refs.ondefault_pic.loading) {
+          return this.$message.error('头像上传中')
+        }
+
         await updatePersonal(this.formData)
         this.$message.success('更新数据成功')
       } catch (e) {
@@ -483,11 +499,20 @@ export default {
     },
     async baoc() {
       try {
+        if (this.$refs.defaulturl_img.loading) {
+          return this.$message.error('头像上传中')
+        }
         await saveUserDetailById(this.userInfo)
         this.$message.success('更新用户信息成功')
       } catch (e) {
         this.$message.error('更新用户信息数据失败')
       }
+    },
+    ondefaultpic(data) {
+      this.formData.staffPhoto = data.img
+    }, // 保存图片成功
+    ondefaulturl(data) {
+      this.userInfo.staffPhoto = data.img
     }
   }
 }

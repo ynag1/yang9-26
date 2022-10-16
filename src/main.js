@@ -18,6 +18,8 @@ import '@/permission' // permission control
 import components from '@/components/index'
 Vue.use(components)// 全局注册组件
 
+import Print from 'vue-print-nb'
+Vue.use(Print);
 
 import * as directives from '@/directives'
 Object.keys(directives).forEach(ele => {

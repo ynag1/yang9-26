@@ -37,4 +37,7 @@ export default (Vue) => {
     // console.log(key)
     Vue.filter(key, filters[key])
   })
+  Object.keys(filters).forEach(key => {
+    Vue.filter(key, filters[key])
+  })
 }
